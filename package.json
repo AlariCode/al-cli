@@ -1,0 +1,31 @@
+{
+  "name": "al-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/core": "^3.2.4",
+    "@octokit/rest": "^18.0.12",
+    "ink": "^3.0.8",
+    "ink-link": "^2.0.0",
+    "ink-spinner": "^4.0.1",
+    "ink-table": "^3.0.0",
+    "ink-text-input": "^4.0.1",
+    "nedb": "^1.8.0",
+    "react": "^17.0.1",
+    "window-size": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/blessed": "^0.1.17",
+    "@types/nedb": "^1.8.11",
+    "@types/react": "^17.0.0",
+    "@types/window-size": "^0.2.5"
+  }
+}
