@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { render, Box, Text, Spacer, useInput } from 'ink';
-import window from 'window-size';
 import Github from './Screens/Github';
 import Options from './Screens/Options';
 import { ScreenEnum } from './screens.enum';
+import useStdoutDimensions from 'ink-use-stdout-dimensions';
 
 const Counter = () => {
-	const [termHeight, SetTermHeight] = useState<number>(0);
 	const [screen, SetScreen] = useState<ScreenEnum>(ScreenEnum.Github);
+	const [columns, rows] = useStdoutDimensions();
 
 	useInput((input, key) => {
 		if (input === '1') {
@@ -18,12 +18,9 @@ const Counter = () => {
 		}
 	});
 
-	useEffect(() => {
-		SetTermHeight(window.height);
-	});
 
 	return <>
-		<Box flexGrow={1} flexDirection="column" height={termHeight} borderColor="cyan" borderStyle="single">
+		<Box flexGrow={1} flexDirection="column" height={rows} borderColor="cyan" borderStyle="single">
 			{screen === ScreenEnum.Github && <Github/>}
 			{screen === ScreenEnum.Options && <Options/>}
 			<Spacer/>

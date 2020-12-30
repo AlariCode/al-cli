@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { Box, Newline, Spacer, Text, useFocusManager, useInput } from 'ink';
 import { GitHubService } from "../Services/github.service";
-import { RestEndpointMethodTypes } from "@octokit/rest";
 import MenuItem from '../Components/MenuItem';
 import Table from 'ink-table'
 import { ConfigRepository } from "../Services/config.repository";
+import useStdoutDimensions from 'ink-use-stdout-dimensions';
 
 const PER_PAGE = 10;
 
@@ -21,8 +21,18 @@ const Github = () => {
     const [names, SetName] = useState<string[]>([]);
     const [selecedName, SetSelectedName] = useState<string>();
     const [table, setTable] = useState<ITable[]>([]);
+    const [perPage, SetPerPage] = useState<number>(PER_PAGE);
     const [offset, SetOffset] = useState<number>(0);
     const [isLoading, SetIsLoading] = useState<boolean>(false);
+    const [columns, rows] = useStdoutDimensions();
+
+    useEffect(() => {
+        loadNames();
+    }, [])
+
+    useEffect(() => {
+        SetPerPage(rows / 5)
+    }, [rows])
 
     const loadJobs = async (repositories: any) => {
         if (!repositories) {
@@ -77,10 +87,6 @@ const Github = () => {
         focusNext();
     }
 
-    useEffect(() => {
-        loadNames();
-    }, [])
-
     useInput((input, key) => {
         if(key.downArrow) {
             focusNext();
@@ -89,16 +95,16 @@ const Github = () => {
             focusPrevious();
         }
         if (key.rightArrow) {
-            if (table && offset + PER_PAGE >= table?.length) {
+            if (table && offset + perPage >= table?.length) {
                 return;
             }
-            SetOffset(x => x + PER_PAGE);
+            SetOffset(x => x + perPage);
         }
         if (key.leftArrow) {
-            if (offset - PER_PAGE < 0) {
+            if (offset - perPage < 0) {
                 return;
             }
-            SetOffset(x => x - PER_PAGE);
+            SetOffset(x => x - perPage);
         }
         if (input == 'r' || input == 'R') {
             loadRepos(selecedName ?? '');
@@ -113,13 +119,14 @@ const Github = () => {
             <MenuItem key="n" label={n} onSelect={() => loadRepos(n)}/>)}</Box>
             <Box flexDirection="column">
                 {isLoading && <Text color="green">Идёт загрузка...</Text>}
-                {table && table.length > 0 && <Table data={table.slice(offset, offset + PER_PAGE).map(x => {
+                {table && table.length > 0 && <Table data={table.slice(offset, offset + perPage).map(x => {
                     return {
                         name: x.name,
                         url: x.url,
                         status: x.status
                     }
                 }) as any} />}
+                <Text>Page {Math.floor((offset + perPage)/ perPage)}/{Math.ceil(table.length / perPage)}</Text>
                 <Box flexGrow={1} flexDirection="row">
                     <Box marginRight={2}><Text inverse>{' <- Page left '}</Text></Box>
                     <Box marginRight={2}><Text inverse>{' R - to update '}</Text></Box>

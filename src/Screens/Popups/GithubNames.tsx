@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react"
 import { Box, useInput, Text, Newline } from 'ink';
-import window from 'window-size';
 import TextInput from 'ink-text-input';
 import { ConfigRepository } from '../../Services/config.repository';
+import useStdoutDimensions from 'ink-use-stdout-dimensions';
 
 interface GithubNamesProps {
     exit: () => any;
 }
 
 const GithubNames = ({ exit }: GithubNamesProps) => {
-	const [termHeight, SetTermHeight] = useState<number>(0);
     const [names, setNames] = useState<string>('');
     const [currentNames, setCurrentNames] = useState<string>('');
+    const [columns, rows] = useStdoutDimensions();
 
     const loadCurrentNames = async () => {
         const names = await ConfigRepository.loadDBKey<string>('githubNames');
@@ -19,7 +19,6 @@ const GithubNames = ({ exit }: GithubNamesProps) => {
     }
 
     useEffect(() => {
-        SetTermHeight(window.height);
         loadCurrentNames()
     }, []);
 
@@ -36,7 +35,7 @@ const GithubNames = ({ exit }: GithubNamesProps) => {
 
     return <>
         <Box 
-            height={termHeight - 2}
+            height={rows - 2}
             width= {40}
             borderColor="cyan"
             borderStyle="round"

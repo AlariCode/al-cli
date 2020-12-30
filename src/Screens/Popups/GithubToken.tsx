@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react"
 import { Box, useInput, Text, Newline } from 'ink';
-import window from 'window-size';
 import TextInput from 'ink-text-input';
 import { ConfigRepository } from '../../Services/config.repository';
+import useStdoutDimensions from 'ink-use-stdout-dimensions';
 
 interface GithubTokenProps {
     exit: () => any;
 }
 
 const GithubToken = ({ exit }: GithubTokenProps) => {
-	const [termHeight, SetTermHeight] = useState<number>(0);
     const [token, setToken] = useState<string>('');
     const [curreentToken, setCurrentToken] = useState<string>('');
+    const [columns, rows] = useStdoutDimensions();
 
     const loadCurrentToken = async () => {
         const token = await ConfigRepository.loadDBKey<string>('githubToken');
@@ -19,7 +19,6 @@ const GithubToken = ({ exit }: GithubTokenProps) => {
     }
 
     useEffect(() => {
-        SetTermHeight(window.height);
         loadCurrentToken()
     }, []);
 
@@ -36,7 +35,7 @@ const GithubToken = ({ exit }: GithubTokenProps) => {
 
     return <>
         <Box 
-            height={termHeight - 2}
+            height={rows - 2}
             width= {40}
             borderColor="cyan"
             borderStyle="round"
